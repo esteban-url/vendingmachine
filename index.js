@@ -24,7 +24,7 @@ const defaultConfig = {
     { name: '🍉 Watermelon', code: 'w1', price: 10, quantity: 5 },
     { name: '🍓 Strawberry', code: 's1', price: 12, quantity: 5 },
     { name: '🥝 Kiwi ', code: 'k1', price: 15, quantity: 5 },
-    { name: '🍑 Peach', code: 'p1', price: 20, quantity: 5 },
+    { name: '🍑 Peach', code: 'p1', price: 20, quantity: 1 },
   ],
 }
 const printHR = () => console.info('\n--------------------------------------\n')
@@ -36,7 +36,7 @@ const main = async () => {
   const printProducts = (filter_func, desc) => {
     printHR()
     print(`🧺 Products${desc ? ' - ' + desc : ''}:`)
-    print('----------------CODE----PRICE---QTY---\n')
+    print('\n----------------CODE----PRICE---QTY---\n')
 
     if (typeof filter_func === 'function') {
       defaultConfig.products.filter(filter_func).map((item) => {
@@ -198,6 +198,7 @@ const main = async () => {
   }
 
   const returnCoins = async (amount) => {
+    if (amount === 0) return
     print('Here is your change: ' + amount + ' credits')
 
     const [db_tens, db_fives, db_twos, db_ones] = getCoins()
@@ -251,7 +252,6 @@ const main = async () => {
     console.log(`${db_twos.coin}:\t${twos} coins`)
     console.log(`${db_fives.coin}:\t${fives} coins`)
     console.log(`${db_tens.coin}:\t${tens} coins`)
-    printDepositBox()
     return [tens, fives, twos, ones]
   }
 
@@ -273,6 +273,11 @@ const main = async () => {
     if (!product) {
       printHR()
       print('🙅 there are no products with that code')
+      printHR()
+      returnCoins(total)
+    } else if (product.quantity === 0) {
+      printHR()
+      print('Sorry, we ran out of ' + product.name)
       printHR()
       returnCoins(total)
     } else if (product.price <= total) {
