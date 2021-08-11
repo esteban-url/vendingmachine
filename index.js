@@ -23,7 +23,7 @@ const defaultConfig = {
     { name: '🍊 Orange', code: 'o1', price: 5, quantity: 5 },
     { name: '🍉 Watermelon', code: 'w1', price: 10, quantity: 5 },
     { name: '🍓 Strawberry', code: 's1', price: 12, quantity: 5 },
-    { name: '🥝 Kiwi', code: 'k1', price: 15, quantity: 5 },
+    { name: '🥝 Kiwi ', code: 'k1', price: 15, quantity: 5 },
     { name: '🍑 Peach', code: 'p1', price: 20, quantity: 5 },
   ],
 }
@@ -36,15 +36,19 @@ const main = async () => {
   const printProducts = (filter_func, desc) => {
     printHR()
     print(`🧺 Products${desc ? ' - ' + desc : ''}:`)
-    printHR()
+    print('----------------CODE----PRICE---QTY---\n')
 
     if (typeof filter_func === 'function') {
       defaultConfig.products.filter(filter_func).map((item) => {
-        print(item)
+        print(
+          `${item.name}\t#️⃣ ${item.code}\t💸 ${item.price}\t🧮 ${item.quantity}`
+        )
       })
     } else {
       defaultConfig.products.map((item) => {
-        print(item)
+        print(
+          `${item.name}\t#️⃣  ${item.code}\t💸 ${item.price}\t🧮 ${item.quantity}`
+        )
       })
     }
   }
@@ -55,7 +59,7 @@ const main = async () => {
     printHR()
 
     defaultConfig.depositBox.map((item) => {
-      print(item)
+      print(`${item.coin}:\t${item.quantity} coins`)
     })
   }
 
@@ -63,7 +67,7 @@ const main = async () => {
     printHR()
     print('🚀 Starting Vending Machine')
     printHR()
-    print('This is the default configuration of the machine:')
+    print('This is the default configuration of\nthe machine:')
     printProducts()
     printDepositBox()
 
@@ -167,7 +171,6 @@ const main = async () => {
         break
       case 'x':
         exit()
-        break
       default:
         printHR()
         print("😞 Sorry, can't understand that. Please select a valid option.")
@@ -195,6 +198,8 @@ const main = async () => {
   }
 
   const returnCoins = async (amount) => {
+    print('Here is your change: ' + amount + ' credits')
+
     const [db_tens, db_fives, db_twos, db_ones] = getCoins()
     var remainer_10 = 0
     var remainer_5 = 0
@@ -241,8 +246,11 @@ const main = async () => {
     db_ones.quantity = db_ones.quantity - remainer_2
     ones = remainer_2
 
-    console.log({ tens }, { fives }, { twos }, { ones })
     printHR()
+    console.log(`${db_ones.coin}:\t${ones} coins`)
+    console.log(`${db_twos.coin}:\t${twos} coins`)
+    console.log(`${db_fives.coin}:\t${fives} coins`)
+    console.log(`${db_tens.coin}:\t${tens} coins`)
     printDepositBox()
     return [tens, fives, twos, ones]
   }
@@ -262,16 +270,21 @@ const main = async () => {
     printProducts((x) => x.price <= total, `Under ${total} credits`)
     const code = await readLineAsync('Enter the code of the product you want: ')
     const product = state.products.find((x) => x.code === code)
-    if (product.price <= total) {
+    if (!product) {
+      printHR()
+      print('🙅 there are no products with that code')
+      printHR()
+      returnCoins(total)
+    } else if (product.price <= total) {
       product.quantity--
       print('thanks here is your ' + product.name)
-      print('and your change: ' + (total - product.price) + ' credits')
+
       returnCoins(total - product.price)
     } else {
       printHR()
       print('🙅 Not enough credits please add more')
-      returnCoins(total)
       printHR()
+      returnCoins(total)
     }
   }
   await init()
