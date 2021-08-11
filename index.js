@@ -47,7 +47,6 @@ const main = async () => {
         print(item)
       })
     }
-    printHR()
   }
 
   const printDepositBox = () => {
@@ -58,7 +57,6 @@ const main = async () => {
     defaultConfig.depositBox.map((item) => {
       print(item)
     })
-    printHR()
   }
 
   const init = async () => {
@@ -69,14 +67,11 @@ const main = async () => {
     printProducts()
     printDepositBox()
 
-    defaultConfig.depositBox.map((item) => {
-      print(item)
-    })
-
     await defaultConfigConfirm()
   }
 
   const defaultConfigConfirm = async () => {
+    printHR()
     const useDefaultConfig = await readLineAsync(
       'Are you ok with this machine? (y/n): '
     )
@@ -87,6 +82,7 @@ const main = async () => {
       case 'YES':
         state.products = [...defaultConfig.products]
         state.depositBox = [...defaultConfig.depositBox]
+        printHR()
         print('😎 Starting up...')
 
         break
@@ -141,7 +137,6 @@ const main = async () => {
     print('🎉 Loading complete! 🎉')
     print('Here is what the machine look like now:')
     printHR()
-    print(state)
   }
 
   const mainMenu = async () => {
